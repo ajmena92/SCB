@@ -1,8 +1,14 @@
-﻿Public Class FrmRecarga
+﻿Imports LibPrintTicket
+
+
+Public Class FrmRecarga
 
     Dim Cn As New SqlClient.SqlConnection
     Dim Cls As New FuncionesDB
     Dim Precio As Decimal
+
+    'Private Property Ticket As Ticket
+
 
     Sub LimpiarPantalla()
         txtCedula.Clear()
@@ -23,6 +29,7 @@
         Catch ex As Exception
             ''Se cierre el formulario            
         End Try
+        Me.Dispose()  'Cierro el formulario
     End Sub
 
     Private Sub FrmEstudiantes_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -33,7 +40,7 @@
                 Cls.CerrarConexion(Cn)
             End If
             MsgBox("Error al cargar el Formulario: " & ex.Message, MsgBoxStyle.Critical)
-            End 'Cierro la aplicacion porque no se pudo abrir la conexion
+            Me.Dispose() 'Cierro el formulario
         End Try
         txtCedula.Focus()
     End Sub
@@ -49,7 +56,7 @@
             gSession.Valor1 = "Usuario"   '  TABLA utilizada.
             gSession.Valor2 = "IdUsuario" ' ORDER BY
             gSession.Valor3 = "Cedula" ' codigo devuelto a la aplicacion en propiedad gsession.resultado
-            gSession.Valor4 = "Cedula,Nombre,PrimerApellido,SegundoApellido" ' Valor presentado al usuario
+            'gSession.Valor4 = "Cedula,Nombre,PrimerApellido,SegundoApellido" ' Valor presentado al usuario
             gSession.Valor5 = "Nombre" ' campo para el filtro utilizado
             Cls.ArmaValor(Valores, "Cedula", "Cédula")
             Cls.ArmaValor(Valores, "Nombre", "Nombre")
@@ -101,9 +108,13 @@
                         MsgBox("El usuario ingresado esta becado, no puede realizar recargas", MsgBoxStyle.Critical)
                         LimpiarPantalla()
                         Exit Sub
+                    ElseIf Ds.Tables(0).Rows(0)!activo = False Then
+                        MsgBox("El usuario ingresado esta inactivo, no puede realizar recargas", MsgBoxStyle.Critical)
+                        LimpiarPantalla()
+                        Exit Sub
                     End If
                     txtCedula.Tag = Ds.Tables(0).Rows(0)!IdUsuario
-                    LblCantTiques.Text = Ds.Tables(0).Rows(0)!CantidadTiquetes & " Tiquetes"                    
+                    LblCantTiques.Text = Ds.Tables(0).Rows(0)!CantidadTiquetes & " Disponibles "
                 Else
                     LimpiarPantalla()
                     MsgBox("Usuario no ingresado en el sistema", MsgBoxStyle.Information)
@@ -144,8 +155,8 @@
         End If
     End Sub
 
-    Function Validaciion() As Boolean
-        Validaciion = False
+    Function Validacion() As Boolean
+        Validacion = False
         If Len(txtCedula.Text) = 0 Then
             MsgBox("Ingrese el numero de cedula", MsgBoxStyle.Critical)
             txtCedula.Focus()
@@ -161,46 +172,119 @@
     End Function
 
     Private Sub BtnGuardar_Click(sender As Object, e As EventArgs) Handles BtnGuardar.Click
-        If Validaciion() Then
+        If Validacion() Then
+
+
             Dim Valores(), Llave() As FuncionesDB.Campos
+            Dim Ds As New DataSet
+
+            Dim pTransac As SqlClient.SqlTransaction
+
             Dim Cmd As String
             Try
+                Cls.IniciaSQL(Cn, pTransac)
                 'Valores = Cls.InicializarArray
                 Llave = Cls.InicializarArray
                 Cls.ArmaValor(Llave, "IdUsuario", txtCedula.Tag)
                 'Cls.ArmaValor(Valores, "Recarga", Val(sen(TxtRecarga.Text)))                  
                 Cmd = "UPDATE Usuario set CantidadTiquetes = CantidadTiquetes + " & Val(sen(TxtRecarga.Text)) & " WHERE IdUsuario = @IdUsuario"
                 ''Suma los tiquetes en usuarios
-                Cls.AplicaSQL(Cmd, Cn, Llave:=Llave)
+                Cls.AplicaSQL(Cmd, Cn, pTransac, Llave)
                 ''Inserta la nueva trasaccion
                 Valores = Cls.InicializarArray
                 Cls.ArmaValor(Valores, "IdUsuario", txtCedula.Tag)
                 Cls.ArmaValor(Valores, "TipoPago", 1)
                 Cls.ArmaValor(Valores, "Cantidad", Val(sen(TxtRecarga.Text)))
-                
-                Cls.Insert("Transacciones", Valores, Cn)
+
+                Cls.Insert("Transacciones", Valores, Cn, pTransac)
+
+                Cls.FinalSQL(pTransac)
                 MsgBox("Recarga realizada con exito.", MsgBoxStyle.Information)
-                BtnCancelar_Click(sender, e)
+
+
+
+                Valores = Cls.InicializarArray
+                Llave = Cls.InicializarArray
+
+                Cls.ArmaValor(Valores, "IdUsuario")
+              
+
+                Cls.ArmaValor(Valores, "CantidadTiquetes")
+
+               
+                Ds = Cls.Consultar("Usuario", Valores, Llave, Cn)
+
+
+
+                LblCantTiques.Text = Ds.Tables(0).Rows(0)!CantidadTiquetes & " Disponibles "
+                'Para actualizar cantidad de tiquetes despues de recargar para poder imprimir recibo
+
+
+
+                'BtnCancelar_Click(sender, e)
             Catch ex As Exception
-                MsgBox("Error al actulizar: " & ex.Message, MsgBoxStyle.Critical)
+                Try
+                    Cls.RollSQL(pTransac)
+                Catch ex2 As Exception
+                    ''Omitir error del rollback, pendiente mejorar
+                End Try
+                MsgBox("Error al recargar: " & ex.Message, MsgBoxStyle.Critical)
             End Try
         End If
     End Sub
 
     Private Sub BtnRegresar_Click(sender As Object, e As EventArgs) Handles BtnRegresar.Click
-        Me.Dispose()
+        Me.Close()
     End Sub
 
-    Private Sub Label8_Click(sender As Object, e As EventArgs) Handles Label8.Click
+ 
+
+
+
+
+    Private Sub Imprimir_Click(sender As Object, e As EventArgs)
 
     End Sub
 
-    Private Sub GroupBox2_Enter(sender As Object, e As EventArgs) Handles GroupBox2.Enter
+    'Private Sub Imprimir_Click_1(sender As Object, e As EventArgs) Handles Imprimir.Click
 
-    End Sub
 
-    
-    Private Sub TxtRecarga_TextChanged(sender As Object, e As EventArgs) Handles TxtRecarga.TextChanged
 
-    End Sub
+    '    Ticket = New Ticket()
+
+
+
+    '    Ticket.AddHeaderLine("CTP GUAYCARA")
+    '    Ticket.AddHeaderLine("")
+    '    Ticket.AddHeaderLine(TxtNombre.Text & "" & TxtPrimerApellido.Text & "" & TxtSegundoApellido.Text)
+    '    'Ticket.AddHeaderLine("Cantidad: " & TxtRecarga.Text)
+    '    'Ticket.AddHeaderLine("Total a pagar:  ₡" & LblTotal.Text)
+
+
+    '    Ticket.AddItem(TxtRecarga.Text, "Tiquetes", LblTotal.Text)
+
+    '    Ticket.AddSubHeaderLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString())
+
+
+
+    '    Ticket.AddTotal("SUBTOTAL", "")
+    '    Ticket.AddTotal("IVA", " ₡ 0")
+    '    Ticket.AddTotal("TOTAL", LblTotal.Text)
+    '    'Ticket.AddTotal("", "")
+    '    ''Ticket.AddTotal("RECIBIDO", "0")
+    '    ''Ticket.AddTotal("CAMBIO", "0")
+    '    'Ticket.AddTotal("", "")
+
+
+    '    Ticket.AddFooterLine("Tiquetes: " & LblCantTiques.Text)
+    '    'Ticket.AddFooterLine("RECARGA")
+
+    '    Ticket.PrintTicket("POS-58")
+    '    BtnCancelar_Click(sender, e)
+
+    'End Sub
+
+
+
+
 End Class

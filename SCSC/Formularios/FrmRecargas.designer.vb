@@ -45,9 +45,12 @@ Partial Class FrmRecarga
         Me.txtCedula = New System.Windows.Forms.TextBox()
         Me.Buscar = New System.Windows.Forms.Button()
         Me.Label4 = New System.Windows.Forms.Label()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.Imprimir = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.Panel4.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'GroupBox1
@@ -61,9 +64,9 @@ Partial Class FrmRecarga
         Me.GroupBox1.Controls.Add(Me.Label8)
         Me.GroupBox1.Font = New System.Drawing.Font("Calibri", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.GroupBox1.ForeColor = System.Drawing.Color.Black
-        Me.GroupBox1.Location = New System.Drawing.Point(18, 177)
+        Me.GroupBox1.Location = New System.Drawing.Point(18, 232)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(572, 152)
+        Me.GroupBox1.Size = New System.Drawing.Size(572, 168)
         Me.GroupBox1.TabIndex = 21
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Datos del Estudiante"
@@ -74,11 +77,11 @@ Partial Class FrmRecarga
         Me.LblTotal.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LblTotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.LblTotal.ImageAlign = System.Drawing.ContentAlignment.TopCenter
-        Me.LblTotal.Location = New System.Drawing.Point(158, 44)
+        Me.LblTotal.Location = New System.Drawing.Point(168, 82)
         Me.LblTotal.Name = "LblTotal"
         Me.LblTotal.Padding = New System.Windows.Forms.Padding(2)
         Me.LblTotal.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.LblTotal.Size = New System.Drawing.Size(202, 31)
+        Me.LblTotal.Size = New System.Drawing.Size(120, 31)
         Me.LblTotal.TabIndex = 54
         Me.LblTotal.Text = " "
         '
@@ -87,30 +90,30 @@ Partial Class FrmRecarga
         Me.Label7.AutoSize = True
         Me.Label7.BackColor = System.Drawing.Color.Transparent
         Me.Label7.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Label7.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.Location = New System.Drawing.Point(163, 22)
+        Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label7.Location = New System.Drawing.Point(113, 94)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(41, 19)
+        Me.Label7.Size = New System.Drawing.Size(52, 20)
         Me.Label7.TabIndex = 53
-        Me.Label7.Text = "Total"
+        Me.Label7.Text = "Total :"
         '
         'Label2
         '
         Me.Label2.AutoSize = True
         Me.Label2.BackColor = System.Drawing.Color.Transparent
         Me.Label2.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Label2.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(6, 22)
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(4, 39)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(139, 19)
+        Me.Label2.Size = New System.Drawing.Size(161, 20)
         Me.Label2.TabIndex = 52
-        Me.Label2.Text = "Tiquetes a Recargar"
+        Me.Label2.Text = "Tiquetes a Recargar :"
         '
         'TxtRecarga
         '
         Me.TxtRecarga.BackColor = System.Drawing.Color.FromArgb(CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer))
         Me.TxtRecarga.Font = New System.Drawing.Font("Calibri", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TxtRecarga.Location = New System.Drawing.Point(10, 44)
+        Me.TxtRecarga.Location = New System.Drawing.Point(168, 38)
         Me.TxtRecarga.MaxLength = 14
         Me.TxtRecarga.Name = "TxtRecarga"
         Me.TxtRecarga.Size = New System.Drawing.Size(120, 26)
@@ -122,7 +125,7 @@ Partial Class FrmRecarga
         Me.LblCantTiques.Font = New System.Drawing.Font("Arial", 13.75!, System.Drawing.FontStyle.Bold)
         Me.LblCantTiques.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.LblCantTiques.ImageAlign = System.Drawing.ContentAlignment.TopCenter
-        Me.LblCantTiques.Location = New System.Drawing.Point(383, 65)
+        Me.LblCantTiques.Location = New System.Drawing.Point(389, 84)
         Me.LblCantTiques.Name = "LblCantTiques"
         Me.LblCantTiques.Padding = New System.Windows.Forms.Padding(20, 20, 15, 15)
         Me.LblCantTiques.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -134,10 +137,10 @@ Partial Class FrmRecarga
         Me.Label8.AutoSize = True
         Me.Label8.BackColor = System.Drawing.Color.Transparent
         Me.Label8.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Label8.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label8.Location = New System.Drawing.Point(396, 22)
+        Me.Label8.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label8.Location = New System.Drawing.Point(402, 38)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(125, 19)
+        Me.Label8.Size = New System.Drawing.Size(135, 20)
         Me.Label8.TabIndex = 49
         Me.Label8.Text = "Total de  Tiquetes"
         '
@@ -145,7 +148,7 @@ Partial Class FrmRecarga
         '
         Me.TxtPrimerApellido.BackColor = System.Drawing.Color.FromArgb(CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer))
         Me.TxtPrimerApellido.Font = New System.Drawing.Font("Calibri", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TxtPrimerApellido.Location = New System.Drawing.Point(22, 89)
+        Me.TxtPrimerApellido.Location = New System.Drawing.Point(168, 58)
         Me.TxtPrimerApellido.MaxLength = 14
         Me.TxtPrimerApellido.Name = "TxtPrimerApellido"
         Me.TxtPrimerApellido.ReadOnly = True
@@ -157,10 +160,10 @@ Partial Class FrmRecarga
         Me.Label6.AutoSize = True
         Me.Label6.BackColor = System.Drawing.Color.Transparent
         Me.Label6.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Label6.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label6.Location = New System.Drawing.Point(18, 67)
+        Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label6.Location = New System.Drawing.Point(50, 65)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(112, 19)
+        Me.Label6.Size = New System.Drawing.Size(118, 20)
         Me.Label6.TabIndex = 46
         Me.Label6.Text = "Primer Apellido:"
         '
@@ -168,7 +171,7 @@ Partial Class FrmRecarga
         '
         Me.TxtSegundoApellido.BackColor = System.Drawing.Color.FromArgb(CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer))
         Me.TxtSegundoApellido.Font = New System.Drawing.Font("Calibri", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TxtSegundoApellido.Location = New System.Drawing.Point(158, 89)
+        Me.TxtSegundoApellido.Location = New System.Drawing.Point(168, 104)
         Me.TxtSegundoApellido.MaxLength = 14
         Me.TxtSegundoApellido.Name = "TxtSegundoApellido"
         Me.TxtSegundoApellido.ReadOnly = True
@@ -180,10 +183,10 @@ Partial Class FrmRecarga
         Me.Label5.AutoSize = True
         Me.Label5.BackColor = System.Drawing.Color.Transparent
         Me.Label5.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Label5.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label5.Location = New System.Drawing.Point(154, 67)
+        Me.Label5.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label5.Location = New System.Drawing.Point(24, 104)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(125, 19)
+        Me.Label5.Size = New System.Drawing.Size(138, 20)
         Me.Label5.TabIndex = 44
         Me.Label5.Text = "Segundo Apellido:"
         '
@@ -191,7 +194,7 @@ Partial Class FrmRecarga
         '
         Me.TxtNombre.BackColor = System.Drawing.Color.FromArgb(CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer))
         Me.TxtNombre.Font = New System.Drawing.Font("Calibri", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TxtNombre.Location = New System.Drawing.Point(293, 89)
+        Me.TxtNombre.Location = New System.Drawing.Point(168, 136)
         Me.TxtNombre.MaxLength = 14
         Me.TxtNombre.Name = "TxtNombre"
         Me.TxtNombre.ReadOnly = True
@@ -203,10 +206,10 @@ Partial Class FrmRecarga
         Me.Label3.AutoSize = True
         Me.Label3.BackColor = System.Drawing.Color.Transparent
         Me.Label3.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Label3.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(289, 67)
+        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.Location = New System.Drawing.Point(98, 135)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(64, 19)
+        Me.Label3.Size = New System.Drawing.Size(69, 20)
         Me.Label3.TabIndex = 42
         Me.Label3.Text = "Nombre:"
         '
@@ -217,9 +220,9 @@ Partial Class FrmRecarga
         Me.Panel4.Controls.Add(Me.BtnRegresar)
         Me.Panel4.Controls.Add(Me.BtnCancelar)
         Me.Panel4.Controls.Add(Me.BtnGuardar)
-        Me.Panel4.Location = New System.Drawing.Point(392, 346)
+        Me.Panel4.Location = New System.Drawing.Point(396, 406)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(198, 66)
+        Me.Panel4.Size = New System.Drawing.Size(197, 72)
         Me.Panel4.TabIndex = 19
         '
         'BtnRegresar
@@ -260,11 +263,11 @@ Partial Class FrmRecarga
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label1.AutoSize = True
         Me.Label1.BackColor = System.Drawing.Color.Transparent
-        Me.Label1.Font = New System.Drawing.Font("Calibri", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 21.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label1.ForeColor = System.Drawing.Color.Black
-        Me.Label1.Location = New System.Drawing.Point(140, 18)
+        Me.Label1.Location = New System.Drawing.Point(180, 9)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(187, 29)
+        Me.Label1.Size = New System.Drawing.Size(243, 33)
         Me.Label1.TabIndex = 20
         Me.Label1.Text = "Modulo Recargas"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -283,7 +286,7 @@ Partial Class FrmRecarga
         Me.GroupBox2.Controls.Add(Me.TxtSegundoApellido)
         Me.GroupBox2.Location = New System.Drawing.Point(18, 50)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(572, 121)
+        Me.GroupBox2.Size = New System.Drawing.Size(572, 176)
         Me.GroupBox2.TabIndex = 22
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Estudiante"
@@ -292,10 +295,10 @@ Partial Class FrmRecarga
         '
         Me.txtCedula.BackColor = System.Drawing.Color.FromArgb(CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(240, Byte), Integer))
         Me.txtCedula.Font = New System.Drawing.Font("Calibri", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtCedula.Location = New System.Drawing.Point(82, 28)
+        Me.txtCedula.Location = New System.Drawing.Point(168, 17)
         Me.txtCedula.MaxLength = 14
         Me.txtCedula.Name = "txtCedula"
-        Me.txtCedula.Size = New System.Drawing.Size(111, 26)
+        Me.txtCedula.Size = New System.Drawing.Size(120, 26)
         Me.txtCedula.TabIndex = 39
         '
         'Buscar
@@ -310,7 +313,7 @@ Partial Class FrmRecarga
         Me.Buscar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.White
         Me.Buscar.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Buscar.ForeColor = System.Drawing.Color.White
-        Me.Buscar.Location = New System.Drawing.Point(199, 27)
+        Me.Buscar.Location = New System.Drawing.Point(311, 19)
         Me.Buscar.Name = "Buscar"
         Me.Buscar.Size = New System.Drawing.Size(27, 27)
         Me.Buscar.TabIndex = 41
@@ -322,12 +325,32 @@ Partial Class FrmRecarga
         Me.Label4.AutoSize = True
         Me.Label4.BackColor = System.Drawing.Color.Transparent
         Me.Label4.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Label4.Font = New System.Drawing.Font("Calibri", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label4.Location = New System.Drawing.Point(18, 30)
+        Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label4.Location = New System.Drawing.Point(104, 19)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(58, 19)
+        Me.Label4.Size = New System.Drawing.Size(63, 20)
         Me.Label4.TabIndex = 40
         Me.Label4.Text = "Cédula:"
+        '
+        'PictureBox1
+        '
+        Me.PictureBox1.BackColor = System.Drawing.Color.Transparent
+        Me.PictureBox1.Image = Global.SCSC.My.Resources.Resources.Users
+        Me.PictureBox1.Location = New System.Drawing.Point(470, 2)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(100, 86)
+        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
+        Me.PictureBox1.TabIndex = 47
+        Me.PictureBox1.TabStop = False
+        '
+        'Imprimir
+        '
+        Me.Imprimir.Location = New System.Drawing.Point(46, 422)
+        Me.Imprimir.Name = "Imprimir"
+        Me.Imprimir.Size = New System.Drawing.Size(140, 35)
+        Me.Imprimir.TabIndex = 48
+        Me.Imprimir.Text = "Imprimir Recibo"
+        Me.Imprimir.UseVisualStyleBackColor = True
         '
         'FrmRecarga
         '
@@ -336,7 +359,9 @@ Partial Class FrmRecarga
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.BackgroundImage = CType(resources.GetObject("$this.BackgroundImage"), System.Drawing.Image)
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ClientSize = New System.Drawing.Size(619, 426)
+        Me.ClientSize = New System.Drawing.Size(605, 485)
+        Me.Controls.Add(Me.Imprimir)
+        Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.Panel4)
@@ -354,6 +379,7 @@ Partial Class FrmRecarga
         Me.Panel4.ResumeLayout(False)
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -380,4 +406,6 @@ Partial Class FrmRecarga
     Friend WithEvents LblTotal As System.Windows.Forms.Label
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents BtnRegresar As System.Windows.Forms.Button
+    Friend WithEvents PictureBox1 As System.Windows.Forms.PictureBox
+    Friend WithEvents Imprimir As System.Windows.Forms.Button
 End Class

@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Linq
 
 Public Class FrmEstudiantes
     Implements DPFP.Capture.EventHandler
@@ -6,35 +7,72 @@ Public Class FrmEstudiantes
     Private Enroller As DPFP.Processing.Enrollment
     'Private Data As AppData
     Public Event OnTemplate(ByVal template)
-
+    Dim DsRutas As New DataSet
     Dim ActivaEdicion As Boolean = False
     Dim Cn As New SqlClient.SqlConnection
     Dim Cls As New FuncionesDB
     Private Sub FrmEstudiantes_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
             Cls.AbrirConexion(Cn, False)
+            CargaRutas(CBRuta)
+            CargaGenero(CBGenero)
             Init()
         Catch ex As Exception
             If Cn.State = ConnectionState.Open Then
                 Cls.CerrarConexion(Cn)
             End If
             MsgBox("Error al cargar el Formulario: " & ex.Message, MsgBoxStyle.Critical)
-            End 'Cierro la aplicacion porque no se pudo abrir la conexion
+            Me.Dispose()  'Cierro el formulario
         End Try
         TxtCedula.Focus()
     End Sub
 
-    Sub LimpiarPantalla()
+    Sub CargaGenero(ByRef Combo As ComboBox)
+        Combo.Items.Add(New LBItem(0, "NO INGRESADO"))
+        Combo.Items.Add(New LBItem(1, "MASCULINO"))
+        Combo.Items.Add(New LBItem(2, "FEMENINO"))
+    End Sub
+    Sub CargaRutas(ByRef Combo As ComboBox)
+        Try
+            Dim Valores(), Llave() As FuncionesDB.Campos
+            Valores = Cls.InicializarArray
+            Llave = Cls.InicializarArray
+            Cls.ArmaValor(Valores, "IdRuta")
+            Cls.ArmaValor(Valores, "Descripcion")
+            Cls.ArmaValor(Valores, "Codigo")
+            Cls.ArmaValor(Valores, "Activo")
+            Cls.ArmaValor(Llave, "Activo", 1)
+            DsRutas = Cls.Consultar("Ruta", Valores, Llave, Cn)
+            If DsRutas.Tables(0).Rows.Count > 0 Then
+                For i As Integer = 0 To DsRutas.Tables(0).Rows.Count - 1
+                    Combo.Items.Add(New LBItem(CType((DsRutas.Tables(0).Rows(i)!IdRuta), String), CType((DsRutas.Tables(0).Rows(i)!Descripcion), String)))
+                Next
+            End If
+            Combo.SelectedIndex = 0
+        Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.Critical)
+        End Try
+    End Sub
+
+    Sub LimpiarPantalla(Optional pFocus As Boolean = True)
         'TxtCedula.Clear()
         TxtApe1.Clear()
         TxtApe2.Clear()
         TxtNombre.Clear()
-        TxtSexo.Clear()
+        TxtFecNac.Clear()
         TxtTipoUsuario.Clear()
+        TxtSeccion.Clear()
+        TxtTelefono.Clear()
+        TxtFecNac.Clear()
+        CBRuta.SelectedIndex = 0
+        CBGenero.SelectedIndex = 0
         ChkBeca.Checked = False
         LblCantTiques.Text = "0 Tiquetes"
-        TxtCedula.Focus()
+        If pFocus Then
+            TxtCedula.Focus()
+        End If
         Picture.Image = Nothing
+        Picture.BackgroundImage = Nothing
         Try
             StopCapture()
         Catch ex As Exception
@@ -53,20 +91,21 @@ Public Class FrmEstudiantes
             gSession.Valor1 = "Usuario"   '  TABLA utilizada.
             gSession.Valor2 = "IdUsuario" ' ORDER BY
             gSession.Valor3 = "Cedula" ' codigo devuelto a la aplicacion en propiedad gsession.resultado
-            gSession.Valor4 = "Cedula,Nombre,PrimerApellido,SegundoApellido" ' Valor presentado al usuario
+            'gSession.Valor4 = "Cedula,Nombre,PrimerApellido,SegundoApellido" ' Valor presentado al usuario
             gSession.Valor5 = "Nombre" ' campo para el filtro utilizado
             Cls.ArmaValor(Valores, "Cedula", "Cédula")
             Cls.ArmaValor(Valores, "Nombre", "Nombre")
             Cls.ArmaValor(Valores, "PrimerApellido", "1° Apellido")
             Cls.ArmaValor(Valores, "SegundoApellido", "2­­° Apellido")
             'Armado de la llave primaria, 1=1 para todos los registros
-            Cls.ArmaValor(Llave, "1", "1")
+            Cls.ArmaValor(Llave, "Activo", "1")
             gSession.Valores = Valores
             gSession.Llave = Llave
             Dim F As New Busqueda
             F.ShowDialog()
             TxtCedula.Text = (gSession.Resultado(0))
             TxtCedula_Validated(sender, e)
+            BtnGuardar.Select()
         Catch ex As Exception
             'MsgBox(MSJ.Mensajes.ErrorBusqueda)
         End Try
@@ -74,6 +113,7 @@ Public Class FrmEstudiantes
     End Sub
 
     Private Sub TxtCedula_Validated(sender As Object, e As EventArgs) Handles TxtCedula.Validated
+        LimpiarPantalla(False)
         TxtCedula.Text = TxtCedula.Text.Trim
         Dim Ds As New DataSet
         Dim Valores(), Llave() As FuncionesDB.Campos
@@ -89,25 +129,43 @@ Public Class FrmEstudiantes
                 Cls.ArmaValor(Valores, "CantidadTiquetes")
                 Cls.ArmaValor(Valores, "CodTipo")
                 Cls.ArmaValor(Valores, "Sexo")
+                Cls.ArmaValor(Valores, "Seccion")
+                Cls.ArmaValor(Valores, "Telefono")
+                Cls.ArmaValor(Valores, "FechaNac")
+                Cls.ArmaValor(Valores, "IdRuta")
                 Cls.ArmaValor(Valores, "ActivaBeca")
+                Cls.ArmaValor(Valores, "HuellaDactilar")
                 Cls.ArmaValor(Valores, "Activo")
 
                 Ds = Cls.Consultar("Usuario", Valores, Llave, Cn)
                 If Ds.Tables(0).Rows.Count > 0 Then
-                    TxtNombre.Text = Ds.Tables(0).Rows(0)!Nombre
-                    TxtApe1.Text = Ds.Tables(0).Rows(0)!PrimerApellido
-                    TxtApe2.Text = Ds.Tables(0).Rows(0)!SegundoApellido
-                    If (Ds.Tables(0).Rows(0)!Sexo = 1) Then
-                        TxtSexo.Text = "MASCULINO"
-                    Else
+                    TxtNombre.Text = CType((Ds.Tables(0).Rows(0)!Nombre), String)
+                    TxtApe1.Text = CType((Ds.Tables(0).Rows(0)!PrimerApellido), String)
+                    TxtApe2.Text = CType((Ds.Tables(0).Rows(0)!SegundoApellido), String)
+                    TxtFecNac.Text = Convert.ToString(Ds.Tables(0).Rows(0)!FechaNac)
+                    TxtTelefono.Text = Convert.ToString(Ds.Tables(0).Rows(0)!Telefono)
+                    TxtSeccion.Text = Convert.ToString(Ds.Tables(0).Rows(0)!Seccion)
 
+                    If (Ds.Tables(0).Rows(0)!Sexo = 1) Then
+                        CBGenero.SelectedIndex = 1
+                    ElseIf (Ds.Tables(0).Rows(0)!Sexo = 2) Then
+                        CBGenero.SelectedIndex = 2
+                    Else
+                        CBGenero.SelectedIndex = 0
                     End If
+                    CBRuta.SelectedIndex = Ds.Tables(0).Rows(0)!IdRuta
+
                     If (Ds.Tables(0).Rows(0)!CodTipo = 1) Then
                         TxtTipoUsuario.Text = "ESTUDIANTE"
                     Else
                         TxtTipoUsuario.Text = "PROFESOR"
                     End If
-                    ChkBeca.Checked = Ds.Tables(0).Rows(0)!ActivaBeca
+                    If IsDBNull(Ds.Tables(0).Rows(0)!HuellaDactilar) Then
+                        Picture.BackgroundImage = Nothing
+                    Else
+                        Picture.BackgroundImage = My.Resources.huella_dactilar
+                    End If
+                    ChkBeca.Checked = CBool((Ds.Tables(0).Rows(0)!ActivaBeca))
                     TxtCedula.Tag = Ds.Tables(0).Rows(0)!IdUsuario
                     LblCantTiques.Text = Ds.Tables(0).Rows(0)!CantidadTiquetes & " Tiquetes"
                     ''Lector 
@@ -120,7 +178,7 @@ Public Class FrmEstudiantes
                 MsgBox(ex.Message)
             End Try
         Else
-            LimpiarPantalla()
+            LimpiarPantalla(False)
         End If
     End Sub
 
@@ -135,7 +193,7 @@ Public Class FrmEstudiantes
     End Sub
 
     Private Sub BtnRegresar_Click(sender As Object, e As EventArgs) Handles BtnRegresar.Click
-        Me.Dispose()
+        Me.Close()
     End Sub
 
     Private Sub BtnGuardar_Click(sender As Object, e As EventArgs) Handles BtnGuardar.Click
@@ -151,6 +209,8 @@ Public Class FrmEstudiantes
             Llave = Cls.InicializarArray
             Cls.ArmaValor(Llave, "IdUsuario", TxtCedula.Tag)
             Cls.ArmaValor(Valores, "ActivaBeca", ChkBeca.Checked)
+            Cls.ArmaValor(Valores, "IdRuta", CBRuta.SelectedIndex)
+            Cls.ArmaValor(Valores, "Sexo", CBGenero.SelectedIndex)
             Cls.ArmaValor(Valores, "Activo", True)
             If ActivaEdicion Then
                 Dim str As New MemoryStream
@@ -166,9 +226,11 @@ Public Class FrmEstudiantes
     End Sub
 
     Private Sub BtnCancelar_Click(sender As Object, e As EventArgs) Handles BtnCancelar.Click
+        ActivaEdicion = False
         LimpiarPantalla()
         TxtCedula.Clear()
         TxtCedula.Focus()
+        Init()
     End Sub
 
     Protected Sub Init()
@@ -201,11 +263,10 @@ Public Class FrmEstudiantes
                 Enroller.AddFeatures(features)              ' Add feature set to template.
             Finally
                 UpdateStatus()
-
                 ' Check if template has been created.
                 Select Case Enroller.TemplateStatus
                     Case DPFP.Processing.Enrollment.Status.Ready        ' Report success and stop capturing
-                        RaiseEvent OnTemplate(Enroller.Template)                        
+                        RaiseEvent OnTemplate(Enroller.Template)
                         SetPrompt("Click Close, and then click Fingerprint Verification.")
                         StopCapture()
                         ActivaEdicion = True
@@ -214,7 +275,8 @@ Public Class FrmEstudiantes
                         StopCapture()
                         RaiseEvent OnTemplate(Nothing)
                         StartCapture()
-
+                    Case DPFP.Processing.Enrollment.Status.Insufficient
+                        ActivaEdicion = True
                 End Select
             End Try
         End If
@@ -222,16 +284,8 @@ Public Class FrmEstudiantes
 
     Protected Sub UpdateStatus()
         ' Show number of samples needed.
-        SetStatus(String.Format("Fingerprint samples needed: {0}", Enroller.FeaturesNeeded))
+        SetStatus(String.Format("Coloque su dedo, {0} veces para ingresar registro de huella.", Enroller.FeaturesNeeded))
     End Sub
-
-
-
-    ''
-
-
-
-
     Protected Function ConvertSampleToBitmap(ByVal Sample As DPFP.Sample) As Bitmap
         Dim convertor As New DPFP.Capture.SampleConversion()    ' Create a sample convertor.
         Dim bitmap As Bitmap = Nothing                          ' TODO: the size doesn't matter
@@ -281,6 +335,7 @@ Public Class FrmEstudiantes
         Catch ex As Exception
             ''Se cierre el formulario            
         End Try
+        Me.Dispose()
     End Sub
 
     Sub OnComplete(ByVal Capture As Object, ByVal ReaderSerialNumber As String, ByVal Sample As DPFP.Sample) Implements DPFP.Capture.EventHandler.OnComplete
@@ -346,41 +401,8 @@ Public Class FrmEstudiantes
         Picture.Image = New Bitmap(bmp, Picture.Size)
     End Sub
 
-
-
-
-
-
-    Private Sub Prompt_TextChanged(sender As Object, e As EventArgs) Handles Prompt.TextChanged
-
-    End Sub
-
-    Private Sub LblCantTiques_Click(sender As Object, e As EventArgs) Handles LblCantTiques.Click
-
-    End Sub
-
-    Private Sub StatusLine_Click(sender As Object, e As EventArgs) Handles StatusLine.Click
-
-    End Sub
-
-    Private Sub ChkBeca_CheckedChanged(sender As Object, e As EventArgs) Handles ChkBeca.CheckedChanged
-
-    End Sub
-
-
-    Private Sub TxtCedula_TextChanged(sender As Object, e As EventArgs) Handles TxtCedula.TextChanged
-
-    End Sub
-
-    Private Sub Label2_Click(sender As Object, e As EventArgs) Handles Label2.Click
-
-    End Sub
-
-    Private Sub GroupBox1_Enter(sender As Object, e As EventArgs) Handles GroupBox1.Enter
-
-    End Sub
-
-    Private Sub TxtApe1_TextChanged(sender As Object, e As EventArgs) Handles TxtApe1.TextChanged
-
+    Private Sub CBRuta_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CBRuta.SelectedIndexChanged
+        Dim result = (From cust In DsRutas.Tables(0).Select("IdRuta = " & CBRuta.SelectedIndex)).SingleOrDefault()
+        LblRuta.Text = result!Codigo
     End Sub
 End Class

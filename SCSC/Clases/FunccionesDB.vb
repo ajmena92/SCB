@@ -1,9 +1,7 @@
 ﻿Option Explicit On
 
-Imports Microsoft.VisualBasic
 Imports System.Data.SqlClient
-Imports System.Configuration
-Imports System.Data
+
 
 ' Dar formato a celdas de datagridview en windows.
 
@@ -36,6 +34,27 @@ Public Class FuncionesDB
             Redondear = Entero + (Decimales * 0.01)
         End If
     End Function
+    'Public Sub AbrirConexion(ByRef pCnMysql As MySqlConnection, ByVal pUsarTransaccion As Boolean, Optional ByRef pTran As MySqlTransaction = Nothing, Optional ByVal Conexion As String = "Cnpiad")
+    '    Try
+    '        'Dim Cn As New SqlConnection(CadenaConexion)
+
+    '        If Conexion.ToUpper = "Cnpiad".ToUpper Then
+    '            pCnMysql.ConnectionString = GetAppConfig("PIAD")
+    '        Else
+    '            pCnMysql.ConnectionString = Conexion
+    '        End If
+    '        pCnMysql.Open()
+    '        If pUsarTransaccion Then
+    '            ' se manejan transacciones
+    '            pTran = pCnMysql.BeginTransaction
+    '        Else
+    '            ' Sin transacciones
+    '        End If
+
+    '    Catch ex As Exception
+    '        Throw New Exception("FuncionesDB.AbrirConexion..." & ex.Message)
+    '    End Try
+    'End Sub
     'Function GetConnectionString(ByVal NombreConfiguracion As String) As String
     '    Dim strConn As String
     '    'Dim configurationAppSettings As New System.Configuration.AppSettingsReader
@@ -68,8 +87,7 @@ Public Class FuncionesDB
             Else
                 pCn.ConnectionString = Conexion
             End If
-
-            pCn.ConnectionString = "server=DANIELFONSECA\SQLDANIEL; database=SCSC; uid=sa; pwd=esquivel07"
+            'pCn.ConnectionString = "server=DANIELFONSECA\SQLDANIEL; database=SCSC; uid=Daniel; pwd=esquivel07"
 
             pCn.Open()
             If pUsarTransaccion Then
@@ -100,6 +118,22 @@ Public Class FuncionesDB
             Throw New Exception("FuncionesDB.CerrarConexion..." & ex.Message)
         End Try
     End Sub
+
+    'Public Sub CerrarConexion(ByRef pCn As MySqlConnection, Optional ByRef pTran As MySqlTransaction = Nothing)
+    '    Try
+    '        If Not pTran Is Nothing Then
+    '            ' se manejan transacciones
+    '            pTran.Commit() ' guarda la transaccion.
+    '        Else
+    '            ' Sin transacciones
+    '        End If
+    '        If pCn.State = ConnectionState.Open Then
+    '            pCn.Close()
+    '        End If
+    '    Catch ex As Exception
+    '        Throw New Exception("FuncionesDB.CerrarConexion..." & ex.Message)
+    '    End Try
+    'End Sub
 
     Function FechaServer(Optional ByVal Conexion As String = "Conexion") As Date
         Try
@@ -577,6 +611,42 @@ Public Class FuncionesDB
 
     End Function
 
+    'Public Function ConsultarTSQL(ByVal Tabla As String, ByVal pSQL As String, ByRef Cn As MySqlConnection, Optional ByVal LlavePrimaria As Campos() = Nothing, Optional ByRef Ptransac As MySqlTransaction = Nothing, Optional ByVal Conexion As String = "Conexion", Optional TimeOut As Integer = 45) As System.Data.DataSet
+    '    ' esta consulta aplica para los SQL que requieren de un group by. y seleccion de registros x Having
+    '    Dim LocalCN As Boolean = False
+    '    Try
+    '        Dim Resultado As New System.Data.DataSet
+    '        Dim Cmd As New MySqlCommand(pSQL, Cn)
+    '        Cmd.CommandTimeout = TimeOut
+    '        Cmd.Parameters.Clear()
+
+    '        If Not (LlavePrimaria Is Nothing) Then
+    '            For I As Integer = 0 To UBound(LlavePrimaria)
+    '                Cmd.Parameters.AddWithValue(LlavePrimaria(I).Nombre, LlavePrimaria(I).Valor)
+    '            Next
+    '        End If
+
+    '        If IsNothing(Ptransac) Then
+    '        Else
+    '            Cmd.Transaction = Ptransac
+    '        End If
+
+    '        Dim Da As New MySqlDataAdapter(Cmd)
+    '        If Tabla = "" Then
+    '            Da.Fill(Resultado)
+    '        Else
+    '            Da.Fill(Resultado, Tabla)
+    '        End If
+    '        Return Resultado
+    '    Catch ex As Exception
+    '        If Not Ptransac Is Nothing Then
+    '            Ptransac.Rollback()
+    '        End If
+    '        Throw New Exception("FuncionesDB.Consultar  " & ex.Message)
+    '    End Try
+
+    'End Function
+
     Public Function ConsultarTSQLGroupBy(ByVal Tabla As String, ByVal pSQL As String, _
             Optional ByRef Cn As SqlConnection = Nothing, Optional ByRef Ptransac As SqlTransaction = Nothing, Optional ByVal LlavePrimaria As Campos() = Nothing, Optional ByVal pOperador As String = " And ", Optional ByVal Conexion As String = "Conexion", Optional TimeOut As Integer = 45) As System.Data.DataSet
         ' esta consulta aplica para los SQL que requieren de un group by. y seleccion de registros x Having
@@ -753,137 +823,85 @@ Public Class FuncionesDB
 
     End Function
 
-    Public Function ConsultarDataReader_Last(ByVal Tabla As String, ByVal Campo As Campos(), ByVal LlavePrimaria As Campos(), _
-            ByRef Cn As SqlConnection, Optional ByRef Ptransac As SqlTransaction = Nothing, Optional ByVal Conexion As String = "Conexion", Optional TimeOut As Integer = 45) As System.Data.SqlClient.SqlDataReader
-        Dim LocalCN As Boolean = False
-        Try
-            Dim Resultado As New System.Data.DataSet
-            Dim SQL As String = "Select "
 
-            If Cn Is Nothing Or IsNothing(Cn) Then
-                Cn = New SqlClient.SqlConnection()
-                LocalCN = True
-                If IsNothing(Ptransac) Then
-                    AbrirConexion(Cn, False, , Conexion)
-                Else
-                    AbrirConexion(Cn, True, Ptransac, Conexion)
-                End If
-            End If
+    'Public Function Consultar(ByVal Tabla As String, ByVal Campo As Campos(), _
+    '        ByVal LlavePrimaria As Campos(), ByRef Cn As MySqlConnection, _
+    '        Optional ByRef Ptransac As MySqlTransaction = Nothing, Optional ByVal Orderby As String = "", Optional ByVal pJoin As String = "", Optional ByVal pOperador As String = " And ", Optional ByVal Conexion As String = "Cnpiad") As System.Data.DataSet
+    '    Try
+    '        Dim Resultado As New System.Data.DataSet
+    '        Dim SQL As String = "Select "
 
-            For I As Integer = 0 To UBound(Campo)
-                SQL &= Campo(I).Nombre & ","
-            Next
+    '        For I As Integer = 0 To UBound(Campo)
+    '            SQL &= Campo(I).Nombre & ","
+    '        Next
 
-            If LlavePrimaria Is Nothing Then
-                SQL = SQL.Remove(SQL.Length - 1, 1) & " From " & Tabla & " "
-            Else
-                SQL = SQL.Remove(SQL.Length - 1, 1) & " From " & Tabla & " Where "
-            End If
+    '        If LlavePrimaria Is Nothing Then
+    '            SQL = SQL.Remove(SQL.Length - 1, 1)
+    '            If pJoin = "" Then
+    '                ' no viene JOIN, solo se usa 1 tabla
+    '                SQL &= " From " & Tabla & " "
+    '            Else
+    '                SQL &= " From " & Tabla & " " & pJoin
+    '            End If
+    '        Else ' viene llave primara o de seleccion
+    '            SQL = SQL.Remove(SQL.Length - 1, 1)
+    '            If pJoin = "" Then
+    '                ' no viene JOIN, solo se usa 1 tabla
+    '                SQL &= " From " & Tabla & " Where "
+    '            Else
+    '                SQL &= " From " & Tabla & " " & pJoin & " Where "
+    '            End If
+    '        End If
 
-            For I As Integer = 0 To UBound(LlavePrimaria)
-                SQL &= LlavePrimaria(I).Nombre & "=@ValorLlave" & I & " and "
-            Next
-            SQL = SQL.Remove(SQL.Length - 5, 5)
+    '        For I As Integer = 0 To UBound(LlavePrimaria)
+    '            ' manejar uso de like
+    '            If InStr(LlavePrimaria(I).Valor, "%") > 0 Then
+    '                ' uso de like
+    '                SQL &= LlavePrimaria(I).Nombre & " Like @ValorLlave" & I & pOperador ' " And "
+    '            Else
+    '                'uso de igual =
+    '                If LlavePrimaria(I).Valor.ToString.ToUpper.Trim = "IS NOT NULL" Then ' Nuevo agregado el 30 nov 2010
+    '                    SQL &= LlavePrimaria(I).Nombre & " " & LlavePrimaria(I).Valor & pOperador ' " And "
+    '                Else
+    '                    SQL &= LlavePrimaria(I).Nombre & "=@ValorLlave" & I & pOperador ' " And "
+    '                End If
 
-            Dim Cmd As New SqlCommand(SQL, Cn)
-            Cmd.CommandTimeout = TimeOut
-            Cmd.Parameters.Clear()
+    '            End If
 
-            For I As Integer = 0 To UBound(LlavePrimaria)
-                Cmd.Parameters.AddWithValue("@ValorLlave" & I, LlavePrimaria(I).Valor)
-            Next
+    '        Next
+    '        SQL = SQL.Remove(SQL.Length - 5, 5)
 
-            If IsNothing(Ptransac) Then
-            Else
-                Cmd.Transaction = Ptransac
-            End If
+    '        If Orderby = "" Then
+    '        Else
+    '            SQL += " Order by " & Orderby
+    '        End If
 
-            Dim Dr As SqlDataReader
-            Dr = Cmd.ExecuteReader
+    '        Dim Cmd As New MySqlCommand(SQL, Cn)
+    '        Cmd.Parameters.Clear()
 
-            ' **** Nuevo ****
-            ' ** Si la conexion NO SE ABRE, se inicializa automaicamente, pero NO SE PUEDE CERRAR
-            ' +++ SI SE CIERRA EL DATAREADER NO FUNCIONA.
+    '        For I As Integer = 0 To UBound(LlavePrimaria)
+    '            Cmd.Parameters.AddWithValue("@ValorLlave" & I, LlavePrimaria(I).Valor)
+    '        Next
 
-            Return Dr
-        Catch ex As Exception
-            If Not Ptransac Is Nothing Then
-                Ptransac.Rollback()
-            End If
-            Throw New Exception("FuncionesDB.ConsultarDataReader..." & ex.Message)
-        End Try
-    End Function
+    '        If IsNothing(Ptransac) Then
+    '        Else
+    '            Cmd.Transaction = Ptransac
+    '        End If
 
-    '*** OJO no se actualiza porque NO se recomienda usar DataReader.
-    Public Function ConsultarDataReader(ByRef Cn As SqlConnection, ByVal Tabla As String, ByVal Campo As Campos(), ByVal LlavePrimaria As Campos(), Optional ByRef Ptransac As SqlTransaction = Nothing, Optional ByVal pJoin As String = "", Optional ByVal pOrderBy As String = "") As System.Data.SqlClient.SqlDataReader
-        Try
-            Dim Resultado As New System.Data.DataSet
-            Dim SQL As String = "Select "
+    '        Dim Da As New MySqlDataAdapter(Cmd)
+    '        Da.Fill(Resultado, Tabla)
+    '        Return Resultado
+    '    Catch ex As Exception
+    '        If Not Ptransac Is Nothing Then
+    '            Ptransac.Rollback()
+    '        End If
+    '        Throw New Exception("FuncionesDB.Consultar  " & ex.Message)
+    '        'MsgBox(ex.Message, MsgBoxStyle.Critical)
+    '        Return Nothing
+    '    End Try
 
-            For I As Integer = 0 To UBound(Campo)
-                SQL &= Campo(I).Nombre & ","
-            Next
+    'End Function
 
-            SQL = SQL.Remove(SQL.Length - 1, 1)
-            If LlavePrimaria Is Nothing Then
-                If pJoin = "" Then
-                    ' no viene JOIN, solo se usa 1 tabla
-                    SQL &= " From " & Tabla & " "
-                Else
-                    SQL &= " From " & Tabla & " " & pJoin
-                End If
-
-            Else
-                If pJoin = "" Then
-                    ' no viene JOIN, solo se usa 1 tabla
-                    SQL &= " From " & Tabla & " Where "
-                Else
-                    SQL &= " From " & Tabla & " " & pJoin & " Where "
-                End If
-            End If
-
-            For I As Integer = 0 To UBound(LlavePrimaria)
-                ' manejar uso de like
-                If InStr(LlavePrimaria(I).Valor, "%") > 0 Then
-                    ' uso de like
-                    SQL &= LlavePrimaria(I).Nombre & " Like @ValorLlave" & I & " and "
-                Else
-                    'uso de igual =
-                    SQL &= LlavePrimaria(I).Nombre & "=@ValorLlave" & I & " and "
-                End If
-            Next
-            SQL = SQL.Remove(SQL.Length - 5, 5)
-
-            '*** Order by, agregado el 20-mayo-2011
-            If pOrderBy = "" Then
-            Else
-                SQL &= " Order By " & pOrderBy
-            End If
-
-            Dim Cmd As New SqlCommand(SQL, Cn)
-            Cmd.Parameters.Clear()
-
-            For I As Integer = 0 To UBound(LlavePrimaria)
-                Cmd.Parameters.AddWithValue("@ValorLlave" & I, LlavePrimaria(I).Valor)
-            Next
-
-            If IsNothing(Ptransac) Then
-            Else
-                Cmd.Transaction = Ptransac
-            End If
-
-            Dim Dr As SqlDataReader
-            Dr = Cmd.ExecuteReader
-
-            Return Dr
-        Catch ex As Exception
-            If Not Ptransac Is Nothing Then
-                Ptransac.Rollback()
-            End If
-            Throw New Exception("FuncionesDB.ConsultarDataReader..." & ex.Message)
-        End Try
-
-    End Function
 
     Public Function GuardarActualizar(ByVal Tabla As String, ByVal Campo As Campos(), Optional ByRef LlavePrimaria As Campos() = Nothing, Optional ByRef Cn As SqlConnection = Nothing, Optional ByRef PTransac As SqlTransaction = Nothing, Optional ByVal Conexion As String = "Conexion") As Boolean
         Dim LocalCN As Boolean = False
@@ -1304,10 +1322,8 @@ Public Class FuncionesDB
             If pCn.State = ConnectionState.Closed Then
                 pCn.Open()
             End If
-
             ' se manejan transacciones
             pTran = pCn.BeginTransaction
-
         Catch ex As Exception
             Throw New Exception("FuncionesDB.AbrirConexion..." & ex.Message)
         End Try
@@ -1334,6 +1350,7 @@ Public Class FuncionesDB
 
     End Sub
 End Class
+
 
 
 
